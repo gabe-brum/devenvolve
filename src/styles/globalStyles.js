@@ -1,8 +1,9 @@
 import { createGlobalStyle } from "styled-components";
-// import sacramento from '../fonts/sacramento.woff'
-// import sacramento2 from '../fonts/sacramento.woff2'
+import theme from "./theme";
 
 const GlobalStyle = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=Antonio:wght@100;700&display=swap'); // Antonio
+  @import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap'); // Sacramento
   *,
   *::after,
   *::before {
@@ -11,11 +12,10 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
-  /* @font-face {
-  font-family: 'Sacramento';
-  src: url(${sacramento2}) format('woff2'),
-       url(${sacramento}) format('woff');
-  } */
+  body {
+    background-color: ${theme.colors.lightGreen};
+  }
+
 `;
 
 export default GlobalStyle;

@@ -10,6 +10,8 @@
     "build:production": "env-cmd -f .env.production npm run-script build"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.9.10",
+    "axios": "^1.2.1",
     "extracted-loader": "^1.0.7",
     "file-loader": "^6.2.0",
     "ignore-loader": "^0.1.2",
@@ -18,7 +20,15 @@
     "next-compose-plugins": "^2.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.40.0",
+    "react-imask": "^6.4.3",
+    "react-input-mask": "^2.0.4",
     "react-lazy-load-image-component": "^1.5.1",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.4.4",
+    "react-scroll": "^1.8.8",
+    "redux": "^4.2.0",
+    "redux-persist": "^6.0.0",
     "styled-components": "^5.3.6",
     "url-loader": "^4.1.1"
   },
@@ -26,6 +36,7 @@
     "@types/node": "^14.14.13",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^17.0.0",
+    "@types/react-scroll": "^1.8.5",
     "babel-plugin-styled-components": "^1.12.0",
     "env-cmd": "^10.1.0",
     "eslint": "^7.29.0",

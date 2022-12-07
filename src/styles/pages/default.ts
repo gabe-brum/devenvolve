@@ -1,15 +1,19 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const Main = styled.main`
   @import url('https://fonts.googleapis.com/css2?family=Antonio:wght@100;700&display=swap'); // Antonio
   @import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap'); // Sacramento
 
-  h1 {
-    font-family: 'Antonio', sans-serif;
-  }
+  padding: 20px;
+`
 
-  h2 {
-    font-family: 'Sacramento', cursive;
-  }
-
+export const Footer = styled.footer`
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0 5px;
+  width: 100%;
 `
