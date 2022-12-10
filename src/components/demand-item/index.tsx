@@ -1,4 +1,5 @@
 import { Modal } from '@components/modal';
+import { Stars } from '@components/stars';
 import react, { useState } from 'react'
 import { DemandContainer, ModalContent } from './styles';
 import { DemandProps } from './types';
@@ -49,7 +50,7 @@ export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, p
           <div className='image-brand'>
             <div className='image-brand__layer'>
               <p>{nameBrand}</p>
-              <span>{stars}</span>
+              <span><Stars stars={stars} /></span>
            </div>
           </div>
           <div className='demand-content'>
@@ -72,7 +73,7 @@ export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, p
           <div className='image-brand'></div>
           <div className='demand-brand__content'>
             <p className='demand-brand__content--name'>{nameBrand}</p>
-            <p className='demand-brand__content--stars'>{stars}</p>
+            <p className='demand-brand__content--stars'><Stars stars={stars} /></p>
           </div>
         </div>
         <div className='demand-content'>

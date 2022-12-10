@@ -1,6 +1,7 @@
 import NavigationFooter from "@components/navigation-footer";
 import { Footer, Main } from "@styles/pages/default";
 import { Notifications } from "./styles";
+import { ButtonLogout } from '@components/button-logout'
 
 export default function Notification() {
 
@@ -20,11 +21,12 @@ export default function Notification() {
 
   return (
     <Main>
+      <ButtonLogout />
       <Notifications>
         {renderNotifications()}
       </Notifications>
       <Footer>
-        <NavigationFooter />
+        <NavigationFooter active={true}/>
       </Footer>
     </Main>
   )

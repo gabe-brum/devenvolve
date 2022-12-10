@@ -112,6 +112,8 @@ export const FreelancerContainer = styled.div`
       outline: none;
       transition: all .5s;
       width: 100%;
+      font-family: 'Antonio', sans-serif;
+      font-weight: ${theme.fontWeights.bold};
 
       &:hover {
         background-color: ${theme.colors.darkGreenHover};
@@ -158,18 +160,20 @@ export const ModalContent = styled.div`
         justify-content: space-between;
         flex-direction: row;
         gap: 0 15px;
-        font-size: 12px;
+        font-size: 14px;
         margin-top: 10px;
+        flex-wrap: wrap;
 
         > span {
           display: flex;
-          height: 20px;
+          height: 30px;
           justify-content: center;
           align-items: center;
           color: ${theme.colors.lightGreen};
           background-color: ${theme.colors.darkGreen};
           border-radius: 20px;
           width: 100%;
+          max-width: 200px;
         }
       }
     }

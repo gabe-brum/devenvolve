@@ -1,4 +1,5 @@
 import { Modal } from '@components/modal';
+import { Stars } from '@components/stars';
 import react, { useState } from 'react'
 import { FreelancerContainer, ModalContent } from './styles';
 import { FreelancerItemProps, SkillsProps } from './types';
@@ -26,7 +27,7 @@ export default function FreelancerItem({ image, name, stars, description, skills
         <ModalContent>
           <p className='name'>{name}</p>
           <div className='wrapper-content'>
-            <p className='wrapper-content--description'>{description}</p>
+            <p className='wrapper-content--description'>{renderDescription(description)}</p>
             <div className='wrapper-content--skills'>
               <p>Suas skills:</p>
               <div className='skills'>{renderSkills(skills)}</div>
@@ -38,15 +39,25 @@ export default function FreelancerItem({ image, name, stars, description, skills
   }
 
   function renderSkills(skills: Array<SkillsProps>) {
-    return skills.map(skill => {
+    if (!skills) return 'Nenhuma skill atribuída'
+
+    return skills?.map(skill => {
       return (
         <span key={skill.id}>{skill.name}</span>
       )
     })
   }
 
+  function renderDescription(description: string) {
+    if (!description) return 'Sem descrição...'
+
+    return description
+  }
+
   function renderDescriptionDefault(description: string) {
-    return description.substring(0, 30) + '...'
+    if (!description) return 'Sem descrição...'
+
+    return description?.substring(0, 30) + '...'
   }
 
   function renderFreelancers() {
@@ -56,7 +67,7 @@ export default function FreelancerItem({ image, name, stars, description, skills
           <div className='image'>
             <div className='image__layer'>
               <p>{name}</p>
-              <span>{stars}</span>
+              <span><Stars stars={stars} /></span>
            </div>
           </div>
           <div className='freelancer-content'>
@@ -75,7 +86,7 @@ export default function FreelancerItem({ image, name, stars, description, skills
           <div className='image'></div>
           <div className='freelancer__content'>
             <p className='freelancer__content--name'>{name}</p>
-            <p className='freelancer__content--stars'>{stars}</p>
+            <p className='freelancer__content--stars'><Stars stars={stars} /></p>
           </div>
         </div>
         <div className='freelancer-content'>

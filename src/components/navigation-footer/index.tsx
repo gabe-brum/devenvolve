@@ -8,11 +8,14 @@ import notification from '../../imgs/icons/bell.png'
 import user from '../../imgs/icons/new-user.png'
 import Link from 'next/link'
 import { NavigationFooterProps } from './types'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store/modules/rootReducer'
 
 export default function NavigationFooter({ active }: NavigationFooterProps) {
+  const userData = useSelector((state: RootState) => state?.user)
 
   function renderItems() {
-    if (true) { // validar se o usuário é freelancer
+    if (true) { // userData.tipo === 'freela'
       return (
         <Footer>
           <Link className={`itemMenu ${active ? 'clicked' : ''}`} href={"/initial-page"} passHref >

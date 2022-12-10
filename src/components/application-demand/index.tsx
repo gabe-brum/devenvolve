@@ -2,27 +2,42 @@ import CheckboxSkill from "@components/checkbox-skills";
 import { ModalContent } from "@components/demand-item/styles";
 import { Modal } from "@components/modal";
 import { useState } from "react";
+import api from "src/services/api";
 import { Container, ContainerButtons, ContainerInfo, DemandModalContent } from "./styles";
 import { ApplicationDemandProps } from "./types";
 
-export default function ApplicationDemand({ title, stack, price, numberOfApplication, date, type, description }: ApplicationDemandProps) {
+export default function ApplicationDemand({ id, title, stack, price, numberOfApplication, date, type, description }: ApplicationDemandProps) {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [stackDemand, setStackDemand] = useState(0 | 1 | 2)
 
   function closeModal() {
     setIsModalOpen(false)
   }
 
-  function cancelApplicationDemand() {
+  async function cancelApplicationDemand() {
+    try {
+      const response = await api.patch(`/api/Freelancer/CancelarCandidatura?idDemanda=${id}`)
+      if (response.status === 200) window.location.reload()
 
+    } catch (error) {
+      console.log(`Não foi possível excluir a demanda devido ao erro [${error}]`)
+    }
   }
 
-  function deleteDemand() {
+  async function deleteDemand() {
+    try {
+      const response = await api.delete(`/api/Demanda/DeletarDemanda/${id}`)
+      if (response.status === 200) window.location.reload()
 
+    } catch (error) {
+      console.log(`Não foi possível excluir a demanda devido ao erro [${error}]`)
+    }
   }
 
   function saveChanges() {
-
+    alert("Sua demanda foi alterada com sucesso!")
+    window.location.reload()
   }
 
   function renderModal() {
@@ -79,9 +94,9 @@ export default function ApplicationDemand({ title, stack, price, numberOfApplica
           <div className="wrapper-content">
             <label htmlFor="title">Stack:</label>
             <div className="wrapper-content--stack">
-              <CheckboxSkill id="1" name="Backend" />
-              <CheckboxSkill id="2" name="Frontend" />
-              <CheckboxSkill id="3" name="Full-stack" />
+              <CheckboxSkill id="1" name="Backend" onChecked={() => setStackDemand(0)}/>
+              <CheckboxSkill id="2" name="Frontend" onChecked={() => setStackDemand(1)}/>
+              <CheckboxSkill id="3" name="Full-stack" onChecked={() => setStackDemand(2)}/>
             </div>
           </div>
           <div className="buttons">
@@ -135,10 +150,7 @@ export default function ApplicationDemand({ title, stack, price, numberOfApplica
       <Container>
         {render()}
       </Container>
-      {/* modal para editar ou ver demanda */}
       {renderModal()} 
-      {/* modal para cancelar candidatura ou excluir demanda */}
-
     </>
   )
 }

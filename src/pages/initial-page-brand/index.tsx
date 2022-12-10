@@ -1,4 +1,4 @@
-import react, { useState } from 'react'
+import react, { useEffect, useState } from 'react'
 import { FreelancerList, FooterInfos, HeaderPage } from './styles'
 import searchIcon from '../../imgs/icons/search.png'
 import Image from 'next/image'
@@ -6,6 +6,8 @@ import DemandItem from '@components/demand-item'
 import NavigationFooter from '@components/navigation-footer'
 import { Footer, Main } from '../../styles/pages/default'
 import FreelancerItem from '@components/freelancer-item'
+import { ButtonLogout } from '@components/button-logout'
+import api from 'src/services/api'
 
 const freelancers = [
   {
@@ -29,75 +31,14 @@ const freelancers = [
       },
     ]
   },
-  {
-    id: 2,
-    image: 'https://img.freepik.com/premium-photo/astronaut-outer-open-space-planet-earth-stars-provide-background-erforming-space-planet-earth-sunrise-sunset-our-home-iss-elements-this-image-furnished-by-nasa_150455-16829.jpg?w=2000',
-    name: 'Freelancer Lorem Ipsum 2',
-    stars: 3,
-    description: 'Oi eu sou... lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    skills: [
-      {
-        name: 'Java',
-        id: 1
-      },
-      {
-        name: 'C#',
-        id: 2
-      },
-      {
-        name: 'MySQL',
-        id: 3
-      },
-    ]
-  },
-  {
-    id: 3,
-    image: 'https://img.freepik.com/premium-photo/astronaut-outer-open-space-planet-earth-stars-provide-background-erforming-space-planet-earth-sunrise-sunset-our-home-iss-elements-this-image-furnished-by-nasa_150455-16829.jpg?w=2000',
-    name: 'Freelancer Lorem  3',
-    stars: 3,
-    description: 'Oi eu sou... lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    skills: [
-      {
-        name: 'React',
-        id: 1
-      },
-      {
-        name: 'CSS',
-        id: 2
-      },
-      {
-        name: 'JavaScript',
-        id: 3
-      },
-    ]
-  },
-  {
-    id: 4,
-    image: 'https://img.freepik.com/premium-photo/astronaut-outer-open-space-planet-earth-stars-provide-background-erforming-space-planet-earth-sunrise-sunset-our-home-iss-elements-this-image-furnished-by-nasa_150455-16829.jpg?w=2000',
-    name: 'Freelancer Lorem Ipsum 4',
-    stars: 3,
-    description: 'Oi eu sou... lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
-    skills: [
-      {
-        name: 'Java',
-        id: 1
-      },
-      {
-        name: 'Vue.js',
-        id: 2
-      },
-      {
-        name: 'Angular',
-        id: 3
-      },
-    ]
-  },
 ]
 
 export default function InitialPageBrand() {
   const [searchTerm, setSearchTerm] = useState('')
   const [hasResults, setHasResults] = useState(false)
+  const [hasResultsOfSearch, setHasResultsOfSearch] = useState([])
   const [isSearching, setIsSearching] = useState(false)
+  const [freelancers, setFreelancers] = useState([])
 
   function definePhrase() {
     let date = new Date()
@@ -123,32 +64,40 @@ export default function InitialPageBrand() {
     return brand;
   }
 
-  function searchTerms(searchTerms: string) {
+  async function searchTerms(searchTerms: string) {
     setIsSearching(true)
-    // chamar api de busca do termo
-    const hasResult = true // vai validar se há retorno
 
-    setHasResults(hasResult)
+    try { 
+      const response = await api.get(`/api/Freelancer/PesquisaFreelancer?nomeFreelancer=${searchTerms}`)
+
+      if (response.data) {
+        setHasResults(true)
+        setHasResultsOfSearch(response.data)
+      }
+
+    } catch (error) {
+      console.log('Não foi possível buscar as demandas pelo termo informado!')
+    }
   }
 
-  function renderSearchDemands() {
-    // if (hasResults) {
-    //   return hasResults.map((demandResult) => {
-    //     <DemandItem
-    //     key={demandResult.id}
-    //     imageBrand={demandResult.imageBrand}
-    //     nameBrand={demandResult.nameBrand}
-    //     stars={demandResult.stars}
-    //     nameDemand={demandResult.title}
-    //     price={demandResult.price}
-    //     stack={demandResult.stack}
-    //     />
-    //   })
-    // }
+  function renderSearchFreelancers() {
+    if (hasResults) {
+      return hasResultsOfSearch.map((freelancerResult) => {
+        <FreelancerItem
+        key={freelancerResult.id}
+        image={freelancerResult.image}
+        name={freelancerResult.name}
+        stars={freelancerResult.stars}
+        description={freelancerResult.description}
+        skills={freelancerResult.skills}
+        />
+      })
+    }
 
     return (
-      <div className='not-found-demands'>
-        <p>Não encontramos freelancers para o que foi informado. Tente novamente com um novo termo!</p>
+      <div className='not-found-freelancers'>
+        <p>Não encontramos freelancers para o que foi informado.</p>
+        <p>Tente novamente com um novo termo!</p>
       </div>
     )
   }
@@ -158,8 +107,8 @@ export default function InitialPageBrand() {
     setSearchTerm(inputValue)
   }
 
-  function renderDemand() {
-    if (freelancers.length === 0) {
+  function renderFreelancers() {
+    if (!freelancers) {
       return (
         <div className='not-found-demands'>
           <p>Sem registros de freelancers na plataforma!</p>
@@ -171,18 +120,35 @@ export default function InitialPageBrand() {
       return (
         <FreelancerItem
         key={freelancer.id}
-        image={freelancer.image}
-        name={freelancer.name}
-        stars={freelancer.stars}
-        description={freelancer.description}
+        image={freelancer.foto}
+        name={freelancer.nome}
+        stars={freelancer.reputacao}
+        description={freelancer.descricao}
         skills={freelancer.skills}
         />
       )
     })
   }
 
+  useEffect(() => {
+    async function getFreelancers() {
+      try {
+        const freelancers = await api.get('/api/Freelancer/Freelancers')
+        console.log('dados', freelancers.data)
+        setFreelancers(freelancers.data)
+      
+      } catch (error) {
+      console.log('Ocorreu um erro ao buscar os freelancers cadastrados!')
+      }
+    
+    }
+
+    getFreelancers()
+  }, [])
+
   return (
     <Main>
+      <ButtonLogout />
       <HeaderPage>
         <div className='welcome'>
           <h1>{definePhrase()}{getNameBrand()}!</h1>
@@ -196,7 +162,7 @@ export default function InitialPageBrand() {
         </div>
       </HeaderPage>
       <FreelancerList>
-        {isSearching ? renderSearchDemands() : renderDemand()}
+        {isSearching ? renderSearchFreelancers() : renderFreelancers()}
       </FreelancerList>
       <FooterInfos>
         <div className='copy'>

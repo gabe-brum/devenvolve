@@ -179,8 +179,8 @@ export default function Cards({ type }: CardsProps) {
           <div className="initial">
             <p className="title">Gold</p>
             <div className="content">
-              <p>Maior relevância em pesquisas e</p>
-              <span>demandas livres</span>
+              <p>Maior relevância em pesquisas e demandas</p>
+              <span>livres</span>
               <p>para cadastro</p>
             </div>
             <button className="button-card">Ver mais</button>

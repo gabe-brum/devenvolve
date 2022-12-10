@@ -24,13 +24,28 @@ export default function HomePage() {
   const [cpfCnpj, setCpfCnpj] = useState('')
   const [isFreelancerChecked, setIsFreelancerChecked] = useState(false)
   const [isBrandChecked, setIsBrandChecked] = useState(false)
+  const [isFreelancerLoginChecked, setIsFreelancerLoginChecked] = useState(false)
+  const [isBrandLoginChecked, setIsBrandLoginChecked] = useState(false)
   const [maskCpfCnpj, setMaskCpfCnpj] = useState('')
   const [disabledFreelancer, setDisabledFreelancer] = useState(false)
   const [disabledBrand, setDisabledBrand] = useState(false)
+  const [disabledFreelancerLogin, setDisabledFreelancerLogin] = useState(false)
+  const [disabledBrandLogin, setDisabledBrandLogin] = useState(false)
   const { register, handleSubmit, setValue, setFocus } = useForm()
   const dispatch = useDispatch()
   const router = useRouter()
-  const [dataForm, setDataForm] = useState({ name: '', email: '', password: '', type: '', cpfCnpj: '', phone: '', cep: '', number: '', street: '', district: '', city: '', state: '' })
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [type, setType] = useState('')
+  const [cpfCnpjInput, setCpfCnpjInput] = useState('')
+  const [phone, setPhone] = useState('')
+  const [cep, setCep] = useState('')
+  const [number, setNumber] = useState('')
+  const [street, setStreet] = useState('')
+  const [district, setDistrict] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
 
   let date = new Date();
   let year = date.getFullYear();
@@ -44,18 +59,19 @@ export default function HomePage() {
   }, [])
 
   async function onLoginSubmit() {
-    const { email, password, type } = dataForm
-
     try {
       const response = await api.post('/login', {
-        email, password, type
+        email, senha: password, tipo: type
       })
 
       if (response) {
         dispatch(
           UserActions.login(response.data)
         )
-        router.replace('/initial-page')
+        if (response) router.replace('/initial-page') // freelancer 
+
+        if (response) router.replace('/initial-page-brand') // empresa
+        
         window.location.reload()
       }
     } catch (error) {
@@ -65,11 +81,10 @@ export default function HomePage() {
 
   async function onRegisterSubmit(e: FormDataEvent) {
     e.preventDefault()
-    const { name, email, password, type, cpfCnpj, phone, cep, number, street, district, city, state } = dataForm
 
     try {
       const response = await api.post('/Usuario/AddUsuario', {
-        name, email, password, type, cpfCnpj, phone, cep, number, street, district, city, state
+        name, email, password, type, cpfCnpjInput, phone, cep, number, street, district, city, state
       })
 
       if (response.status === 201) { 
@@ -84,25 +99,47 @@ export default function HomePage() {
       setFormMessage('Erro ao tentar cadastrar o usuário. Tente novamente mais tarde!')
     }
 
-    setDataForm({name: '', email: '', password: '', type: '', cpfCnpj: '', phone: '', cep: '', number: '', street: '', district: '', city: '', state: ''})
+    setName('')
+    setEmail('')
+    setPassword('')
+    setType('')
+    setCpfCnpjInput('')
+    setPhone('')
+    setCep('')
+    setNumber('')
+    setStreet('')
+    setDistrict('')
+    setCity('')
+    setState('')
   }
 
   const handleOnChangeFreelancer = () => {
-    setIsFreelancerChecked(!isFreelancerChecked);
+    setIsFreelancerChecked(!isFreelancerChecked)
     setCpfCnpj('CPF')
     setMaskCpfCnpj('000.000.000-00')
     setDisabledBrand(!disabledBrand)
-    // setDataForm(prevState => [...prevState, type: 'freelancer'])}
+    setType('freela')
   };
 
   const handleOnChangeBrand = () => {
-    setIsBrandChecked(!isBrandChecked);
+    setIsBrandChecked(!isBrandChecked)
     setCpfCnpj('CNPJ')
     setMaskCpfCnpj('00.000.000/0000-00')
     setDisabledFreelancer(!disabledFreelancer)
-    // setDataForm(prevState => [...prevState, type: 'brand'])}
+    setType('empresa')
   };
 
+  const handleOnChangeFreelancerLogin = () => {
+    setIsFreelancerLoginChecked(!isFreelancerChecked)
+    setDisabledBrandLogin(!disabledBrandLogin)
+    setType('freela')
+  };
+
+  const handleOnChangeBrandLogin = () => {
+    setIsBrandLoginChecked(!isBrandLoginChecked)
+    setDisabledFreelancerLogin(!disabledFreelancerLogin)
+    setType('empresa')
+  };
 
   function handleChangeCep(event: react.ChangeEvent<HTMLInputElement>) {
     let cep = event.target.value.replace(/\D/g, '')
@@ -190,9 +227,19 @@ export default function HomePage() {
           <div className='login-wrapper__type--card'>
             <form onSubmit={handleSubmit(onLoginSubmit)}>
               <label htmlFor='email'>E-mail:</label>
-              <input type="email" id='email'/>
+              <input type="email" id='email' onChange={(event: any) => setEmail(event.target.value)}/>
               <label htmlFor='password'>Senha:</label>
-              <input type="password" id='password'/>
+              <input type="password" id='password' onChange={(event: any) => setPassword(event.target.value)}/>
+              <div className='checkbox-wrapper'>
+                <label htmlFor='freelancerLogin' className="container">Freelancer
+                  <input type="checkbox" id='freelancerLogin' name='freelancerLogin' checked={isFreelancerLoginChecked} onChange={handleOnChangeFreelancerLogin} disabled={disabledFreelancer}/>
+                  <span className="checkmark"></span>
+                </label>
+                <label htmlFor='brandLogin' className="container">Empresa
+                  <input type="checkbox" id='brandLogin' name='brandLogin' checked={isBrandLoginChecked} onChange={handleOnChangeBrandLogin} disabled={disabledBrand}/>
+                  <span className="checkmark"></span>
+                </label>
+              </div>
               <small>Ainda não tem cadastro? Cadastre-se {isMobile ? 'abaixo': 'ao lado'}</small>
               <div className='form-message'>
                 <p className={`form-message__text ${hasError ? 'error' : 'success'}`}>{formMessage}</p>
@@ -206,13 +253,13 @@ export default function HomePage() {
           <div className='login-wrapper__type--card'> 
           <form onSubmit={handleSubmit(onRegisterSubmit)}>
             <label htmlFor='name'>Nome:</label>
-            <input type="text" id='name' onChange={(e) => setDataForm(prevState => { return {...prevState, name: e.target.value}})}/>
+            <input type="text" id='name' onChange={(e) => setName(e.target.value)}/>
 
             <label htmlFor='newEmail'>E-mail:</label>
-            <input type="email" id='newEmail' onChange={(e) => setDataForm(prevState => { return {...prevState, email: e.target.value}})}/>
+            <input type="email" id='newEmail' onChange={(e) => setEmail(e.target.value)}/>
 
             <label htmlFor='newPassword'>Senha:</label>
-            <input type="password" id='newPassword' onChange={(e) => setDataForm(prevState => { return {...prevState, password: e.target.value}})}/>
+            <input type="password" id='newPassword' onChange={(e) => setPassword(e.target.value)}/>
 
             <label htmlFor="type-register">Vou ser:</label>
             <div className='checkbox-wrapper'>
@@ -229,39 +276,39 @@ export default function HomePage() {
             <label htmlFor='cpfCnpj'>Informe seu {cpfCnpj}:</label>
             <IMaskInput
               mask={maskCpfCnpj}
-              onComplete={(e: react.ChangeEvent<HTMLInputElement>) => setDataForm(prevState => { return {...prevState, cpfCnpj: e?.target?.value}})}
+              onComplete={(e: react.ChangeEvent<HTMLInputElement>) => setCpfCnpjInput(e.target.value)}
             />
 
             <label htmlFor='cpfCnpj'>Informe seu telefone:</label>
             <IMaskInput
               mask='(00) 00000-0000'
-              onComplete={(e: react.ChangeEvent<HTMLInputElement>) => setDataForm(prevState => { return {...prevState, phone: e?.target?.value}})}
+              onComplete={(e: react.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
             />
     
             <div className='cep-wrapper'>
               <div className='cep-wrapper__item'>
                 <label htmlFor="cep">Informe seu CEP:</label>
-                <input type="text" id='cep' name='cep' onBlur={(event => handleChangeCep(event))} onChange={(e) => setDataForm(prevState => { return {...prevState, cep: e.target.value}})}/>
+                <input type="text" id='cep' name='cep' onBlur={(event => handleChangeCep(event))} onChange={(e) => setCep(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="number">Informe o número:</label>
-                <input type="number" id='number' {...register('number')} onChange={(e) => setDataForm(prevState => { return {...prevState, number: e.target.value}})}/>
+                <input type="number" id='number' {...register('number')} onChange={(e) => setNumber(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="street">Informe o logradouro:</label>
-                <input type="text" id='street' {...register('street')} onChange={(e) => setDataForm(prevState => { return {...prevState, street: e.target.value}})}/>
+                <input type="text" id='street' {...register('street')} onChange={(e) => setStreet(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="city">Informe a cidade:</label>
-                <input type="text" id='city' {...register('city')} onChange={(e) => setDataForm(prevState => { return {...prevState, city: e.target.value}})}/>
+                <input type="text" id='city' {...register('city')} onChange={(e) => setCity(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="district">Informe o bairro:</label>
-                <input type="text" id='district' {...register('district')} onChange={(e) => setDataForm(prevState => { return {...prevState, district: e.target.value}})}/>
+                <input type="text" id='district' {...register('district')} onChange={(e) => setDistrict(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="state">Informe o estado:</label>
-                <input type="text" id='state' {...register('state')} onChange={(e) => setDataForm(prevState => { return {...prevState, state: e.target.value}})}/>
+                <input type="text" id='state' {...register('state')} onChange={(e) => setState(e.target.value)}/>
               </div>
             </div>
            

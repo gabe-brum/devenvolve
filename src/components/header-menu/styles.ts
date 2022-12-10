@@ -78,6 +78,15 @@ export const MenuList = styled.div`
       max-height: 100vh;
     }
 
+    > a {
+      text-decoration: none;
+      color: ${theme.colors.blackGray};
+      font-size: ${theme.fontSizes.medium};
+      font-family: 'Antonio', sans-serif;
+      font-weight: 100;
+      width: 100%;
+      }
+
     > li {
     list-style-type: none;
     padding: 10vh 0;

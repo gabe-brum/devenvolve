@@ -25,6 +25,7 @@ export const HeaderPage = styled.header`
 
     p {
       font-family: 'Sacramento', cursive;
+      font-size: 24px;
     }
   }
 
@@ -81,11 +82,14 @@ export const FreelancerList = styled.section`
   margin: 40px 0;
   width: 100%;
 
-  .not-found-demands {
+  .not-found-freelancers {
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 0 50px;
+    text-align: center;
+    gap: 20px;
+    flex-direction: column;
 
     > p {
       color: ${theme.colors.darkGreen};

@@ -142,6 +142,7 @@ export const DataProfile = styled.div`
     border-radius: 20px;
     color: ${theme.colors.darkGreen};
     height: 40px;
+    font-family: 'Antonio', sans-serif;
     padding-left: 20px;
     outline: none;
     width: 100%;
@@ -244,5 +245,51 @@ export const Skills = styled.article`
     flex-wrap: wrap;
     gap: 0 10px;
     width: 100%;
+  }
+`
+
+export const ContentModal = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px 0;
+  font-family: "Antonio", sans-serif;
+  font-weight: ${theme.fontWeights.bold};
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    
+    .button {
+      border: none;
+      border-radius: 20px;
+      outline: none;
+      height: 30px;
+      cursor: pointer;
+      transition: all .5s;
+      width: 100%;
+
+      &.yes {
+        background-color: ${theme.colors.blackGray};
+        color: ${theme.colors.lightGreen};
+
+        &:hover {
+          background-color: ${theme.colors.blackGrayHover};
+        }
+      }
+
+      &.no {
+        background-color: ${theme.colors.darkGreen};
+        color: ${theme.colors.lightGreen};
+
+        &:hover {
+          background-color: ${theme.colors.darkGreenHover};
+        }
+      }
+    }
   }
 `

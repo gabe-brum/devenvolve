@@ -20,6 +20,7 @@ export const DemandContainer = styled.div`
 
   .image-brand {
     background-image: url(${(props) => props.imageBrand});
+    background-color: ${theme.colors.darkGreen};
     background-position: center;
     background-size: cover;
     border-radius: 20px;
@@ -145,7 +146,7 @@ export const DemandContainer = styled.div`
         border: none;
         border-radius: 20px;
         font-family: 'Antonio', sans-serif;
-        font-size: 12px;
+        font-size: 14px;
         height: 40px;
         transition: all .5s;
         width: 150px;
@@ -224,10 +225,11 @@ export const ModalContent = styled.div`
     border: none;
     height: 40px;
     transition: all .5s;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: ${theme.fontWeights.bold};
     padding: 0 10px;
     width: 100%;
+    font-family: 'Antonio', sans-serif;
 
     @media (min-width: ${theme.breakpoints.tablet}) {
       font-size: 16px;

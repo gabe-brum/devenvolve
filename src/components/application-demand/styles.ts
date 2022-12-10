@@ -67,7 +67,6 @@ export const ContainerButtons = styled.div`
   display: flex;
   flex-direction: row;
   gap: 0 10px;
-  font-family: 'Antonio', sans-serif;
   width: 100%;
 
   .button {
@@ -80,6 +79,7 @@ export const ContainerButtons = styled.div`
     font-weight: ${theme.fontWeights.bold};
     transition: all .5s;
     width: 50%;
+    font-family: 'Antonio', sans-serif;
 
     @media (min-width: ${theme.breakpoints.tablet}) {
       font-size: 16px;
@@ -149,6 +149,7 @@ export const DemandModalContent = styled.div`
       border: 1px solid ${theme.colors.darkGreen};
       padding: 0 15px;
       outline: none;
+      font-family: "Antonio", sans-serif;
 
       &:focus {
         border: 2px solid ${theme.colors.darkGreen};
@@ -163,6 +164,7 @@ export const DemandModalContent = styled.div`
         height: 100px;
         outline: none;
         resize: none;
+        font-family: "Antonio", sans-serif;
       }
     }
 
@@ -201,6 +203,8 @@ export const DemandModalContent = styled.div`
       width: 100%;
       cursor: pointer;
       transition: all .5s;
+      font-family: "Antonio", sans-serif;
+      font-size: 14px;
 
       &.cancel {
         background-color: ${theme.colors.darkGreen};

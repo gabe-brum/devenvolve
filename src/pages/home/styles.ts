@@ -1,14 +1,11 @@
 import theme from "@styles/theme";
 import styled from "styled-components";
+import background from '../../imgs/assets/background.png'
 
 export const Container = styled.section`
   @import url('https://fonts.googleapis.com/css2?family=Antonio:wght@100;700&display=swap'); // Antonio
   @import url('https://fonts.googleapis.com/css2?family=Sacramento&display=swap'); // Sacramento
 
-  background-image: url(../../imgs/assets/background.png);
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   font-family: 'Antonio', sans-serif;
@@ -22,8 +19,16 @@ export const Container = styled.section`
 `
 
 export const ContainerHome = styled(Container)`
+  background-image: url(https://www.pngmart.com/files/8/Lines-PNG-Free-Image.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   align-items: center;
   height: 105vh;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    background-image: none;
+  }
 
   @media (min-width: ${theme.breakpoints.mobile}) {
     height: 105vh;
@@ -36,6 +41,9 @@ export const ContainerHome = styled(Container)`
   h1 {
     font-family: 'Sacramento', cursive;
     text-align: center;
+    font-size: 36px;
+    color: ${theme.colors.darkGreen};
+    font-weight: ${theme.fontWeights.light};
 
     @media (min-width: ${theme.breakpoints.tablet}) {
       font-size: ${theme.fontSizes.xxLarge};
@@ -49,14 +57,9 @@ export const ContainerHome = styled(Container)`
     margin-top: 30px;
     align-items: center;
 
-    
-    @media (min-width: ${theme.breakpoints.tablet}) {
-      margin-top: 50px;
-    }
-
     > img {
-      width: 130px;
-      height: 145px;
+      width: 110px;
+      height: 125px;
 
       @media (min-width: ${theme.breakpoints.tablet}) {
         width: 150px;
@@ -75,18 +78,17 @@ export const ContainerHome = styled(Container)`
         font-size: ${theme.fontSizes.larger};
 
         @media (min-width: ${theme.breakpoints.tablet}) {
-          font-size: 2.5em;
-          margin-bottom: 10px;
+          font-size: 3.2em;
         }
       }
 
       > p:last-child {
         color: ${theme.colors.lightGray};
         font-family: 'Sacramento', cursive;
-        font-size: ${theme.fontSizes.medium};
+        font-size: ${theme.fontSizes.large};
 
         @media (min-width: ${theme.breakpoints.tablet}) {
-          font-size: 1.5em;
+          font-size: 2em;
         }
       }
     }
@@ -121,7 +123,7 @@ export const ContainerPlans = styled(Container)`
 `
 
 export const ContainerAbout = styled(Container)`
-  height: 155vh;
+  height: 145vh;
 
   @media (min-width: ${theme.breakpoints.mobile}) {
     height: 110vh;
@@ -203,7 +205,7 @@ export const ContainerLogin = styled(Container)`
   display: flex;
   flex-direction: column;
   gap: 40px 0;
-  height: 230vh;
+  height: 240vh;
 
   @media (min-width: ${theme.breakpoints.mobile}) {
     height: 120vh;
@@ -215,7 +217,7 @@ export const ContainerLogin = styled(Container)`
     padding: 0 100px;
     justify-content: center;
     align-items: center;
-    height: 140vh;
+    height: 145vh;
   }
 
   .login-wrapper__type {
@@ -226,7 +228,7 @@ export const ContainerLogin = styled(Container)`
     width: 100%;
 
     > p {
-      font-size: 24px;
+      font-size: 36px;
       font-family: "Sacramento", cursive;
       margin-bottom: 10px;
     }
@@ -403,7 +405,14 @@ export const ContainerLogin = styled(Container)`
           border: none;
           outline: none;
           height: 40px;
+          font-family: "Antonio", sans-serif;
+          font-weight: ${theme.fontWeights.bold};
+          transform: all .5s;
           width: 100%;
+
+          &:hover {
+            background-color: ${theme.colors.blackGrayHover};
+          }
         }
       }
     }

@@ -16,7 +16,7 @@ export const ApplicationDemandStyle = styled.section`
   .not-found {
     display: flex;
     flex-direction: column;
-    font-family: 'Antonio', sans-serif;
+    font-family: 'Sacramento', cursive;
 
     @media (min-width: ${theme.breakpoints.tablet}) {
       max-width: 500px;
@@ -35,12 +35,15 @@ export const ApplicationDemandStyle = styled.section`
       outline: none;
       margin: 20px 0;
       height: 40px;
+      font-size: 16px;
       color: ${theme.colors.lightGreen};
       transition: all .5s;
       display: flex;
       justify-content: center;
       align-items: center;
       text-decoration: none;
+      font-family: "Antonio", sans-serif;
+      font-weight: ${theme.fontWeights.bold};
       width: 100%;
 
       &:hover {

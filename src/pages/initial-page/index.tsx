@@ -1,4 +1,4 @@
-import react, { useState } from 'react'
+import react, { useState, useEffect } from 'react'
 import { DemandList, FooterInfos, HeaderPage } from './styles'
 import searchIcon from '../../imgs/icons/search.png'
 import Image from 'next/image'
@@ -6,55 +6,21 @@ import DemandItem from '@components/demand-item'
 import NavigationFooter from '@components/navigation-footer'
 import { Footer, Main } from '../../styles/pages/default'
 import { useSelector } from 'react-redux'
-
-const demands = [
-  {
-    id: 1,
-    imageBrand: 'https://img.freepik.com/premium-photo/astronaut-outer-open-space-planet-earth-stars-provide-background-erforming-space-planet-earth-sunrise-sunset-our-home-iss-elements-this-image-furnished-by-nasa_150455-16829.jpg?w=2000',
-    nameBrand: 'Empresa Lorem Ipsum',
-    stars: 3,
-    title: 'Desenvolvimento de um C.R.U.D. em PHP',
-    stack: 'Full-stack',
-    price: 3000,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-  },
-  {
-    id: 2,
-    imageBrand: 'https://img.freepik.com/premium-photo/astronaut-outer-open-space-planet-earth-stars-provide-background-erforming-space-planet-earth-sunrise-sunset-our-home-iss-elements-this-image-furnished-by-nasa_150455-16829.jpg?w=2000',
-    nameBrand: 'Empresa Lorem Ipsum',
-    stars: 5,
-    title: 'Desenvolvimento de uma landing page - leads',
-    stack: 'Front-end',
-    price: 2600,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-  },
-  {
-    id: 3,
-    imageBrand: 'https://img.freepik.com/premium-photo/astronaut-outer-open-space-planet-earth-stars-provide-background-erforming-space-planet-earth-sunrise-sunset-our-home-iss-elements-this-image-furnished-by-nasa_150455-16829.jpg?w=2000',
-    nameBrand: 'Empresa Lorem Ipsum',
-    stars: 5,
-    title: 'Desenvolvimento de uma landing page - leads',
-    stack: 'Front-end',
-    price: 2600,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-  },
-  {
-    id: 4,
-    imageBrand: 'https://img.freepik.com/premium-photo/astronaut-outer-open-space-planet-earth-stars-provide-background-erforming-space-planet-earth-sunrise-sunset-our-home-iss-elements-this-image-furnished-by-nasa_150455-16829.jpg?w=2000',
-    nameBrand: 'Empresa Lorem Ipsum',
-    stars: 5,
-    title: 'Desenvolvimento de uma landing page - leads',
-    stack: 'Front-end',
-    price: 2600,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-  },
-]
+import { RootState } from '../../store/modules/rootReducer'
+import { ButtonLogout } from '@components/button-logout'
+import api from 'src/services/api'
 
 export default function InitialPage() {
   const [searchTerm, setSearchTerm] = useState('')
+  const [hasResultsOfSearch, setHasResultsOfSearch] = useState([])
   const [hasResults, setHasResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
-  const userData = useSelector((state) => state?.user)
+  const [demands, setDemands] = useState([])
+  const userData = useSelector((state: RootState) => state?.user)
+
+  useEffect(() => {
+    console.log('dados', userData)
+  }, [userData])
 
   function definePhrase() {
     let date = new Date()
@@ -73,39 +39,45 @@ export default function InitialPage() {
   }
 
   function getNameUser() {
-    let user: string;
-
-    user = 'Gabriel' // default
-
-    return user;
+    return userData?.nome;
   }
 
-  function searchTerms(searchTerms: string) {
+  async function searchTerms(searchTerms: string) {
     setIsSearching(true)
-    // chamar api de busca do termo
-    const hasResult = true // vai validar se há retorno
 
-    setHasResults(hasResult)
+    try { 
+      const response = await api.get(`api/Freelancer/PesquisaDemanda?nomeDemanda=${searchTerms}`)
+
+      if (response.data) {
+        setHasResults(true)
+        setHasResultsOfSearch(response.data)
+      }
+
+    } catch (error) {
+      console.log('Não foi possível buscar as demandas pelo termo informado!')
+    }
   }
 
   function renderSearchDemands() {
-    // if (hasResults) {
-    //   return hasResults.map((demandResult) => {
-    //     <DemandItem
-    //     key={demandResult.id}
-    //     imageBrand={demandResult.imageBrand}
-    //     nameBrand={demandResult.nameBrand}
-    //     stars={demandResult.stars}
-    //     nameDemand={demandResult.title}
-    //     price={demandResult.price}
-    //     stack={demandResult.stack}
-    //     />
-    //   })
-    // }
+    if (hasResults) {
+      return hasResultsOfSearch.map((demandResult) => {
+        <DemandItem
+        key={demandResult.id}
+        imageBrand={demandResult.imageBrand}
+        nameBrand={demandResult.nameBrand}
+        stars={demandResult.stars}
+        nameDemand={demandResult.title}
+        price={demandResult.price}
+        stack={demandResult.stack}
+        description={demandResult.description}
+        />
+      })
+    }
 
     return (
       <div className='not-found-demands'>
-        <p>Não encontramos demandas para o que foi informado. Tente novamente com um novo termo!</p>
+        <p>Não encontramos demandas para o que foi informado.</p>
+        <p>Tente novamente com um novo termo!</p>
       </div>
     )
   }
@@ -116,10 +88,11 @@ export default function InitialPage() {
   }
 
   function renderDemand() {
-    if (demands.length === 0) {
+    if (!demands.length) {
       return (
         <div className='not-found-demands'>
-          <p>Infelizmente não temos demandas cadastradas no momento! Volte mais tarde.</p>
+          <p>Infelizmente não temos demandas cadastradas no momento!</p>
+          <p>Volte mais tarde.</p>
         </div>
       )
     }
@@ -140,8 +113,23 @@ export default function InitialPage() {
     })
   }
 
+  async function getDemand() {
+    try {
+      const demands = await api.get('/api/Empresa/GetDemandas')
+      setDemands(demands.data)
+
+    } catch (error) {
+      console.log('Não foi possível listar as demandas cadastradas devido ao erro: ', error)
+    }
+  }
+
+  useEffect(() => {
+    getDemand()
+  }, [])
+
   return (
     <Main>
+      <ButtonLogout />
       <HeaderPage>
         <div className='welcome'>
           <h1>{definePhrase()}{getNameUser()}!</h1>

@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 import react, { useEffect, useState } from 'react'
 import { Menu, MenuDesktop, MenuList } from './styles'
-import { Link, animateScroll as scroll } from "react-scroll";
+import { Link as LinkScroll, animateScroll as scroll } from "react-scroll";
+import Link from 'next/link';
 
 export default function HeaderMenu() {
   const [shouldShowListMenu, setShouldShowListMenu] = useState(false)
-  const [isOptionActive, setIsOptionActive] = useState(false)
 
   let isMobile: boolean;
   if (typeof window !== 'undefined') {
@@ -52,7 +52,7 @@ export default function HeaderMenu() {
       <MenuDesktop>
         <ul>
           <li>
-            <Link 
+            <LinkScroll 
             activeClass='menuClicked'
             to='home'
             spy={true}
@@ -61,11 +61,11 @@ export default function HeaderMenu() {
             duration={500}
             >
               Home
-            </Link>
+            </LinkScroll>
           </li>
           <li>|</li>
           <li>
-            <Link 
+            <LinkScroll 
             activeClass='menuClicked'
             to='plans'
             spy={true}
@@ -74,11 +74,11 @@ export default function HeaderMenu() {
             duration={500}
             >
               Planos
-            </Link>
+            </LinkScroll>
           </li>
           <li>|</li>
           <li>
-            <Link 
+            <LinkScroll 
             activeClass='menuClicked'
             to='about'
             spy={true}
@@ -87,11 +87,11 @@ export default function HeaderMenu() {
             duration={500}
             >
               Sobre a DevEnvolve
-            </Link>
+            </LinkScroll>
           </li>
           <li>|</li>
           <li>
-            <Link 
+            <LinkScroll 
             activeClass='menuClicked'
             to='login'
             spy={true}
@@ -100,7 +100,7 @@ export default function HeaderMenu() {
             duration={500}
             >
               Login
-            </Link>
+            </LinkScroll>
           </li>
         </ul>
       </MenuDesktop>

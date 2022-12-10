@@ -25,6 +25,7 @@ export const HeaderPage = styled.header`
 
     p {
       font-family: 'Sacramento', cursive;
+      font-size: 24px;
     }
   }
 
@@ -79,6 +80,7 @@ export const DemandList = styled.section`
   flex-direction: column;
   font-family: 'Sacramento', cursive;
   margin: 40px 0;
+  padding-bottom: 50px;
   width: 100%;
 
   .not-found-demands {
@@ -86,6 +88,9 @@ export const DemandList = styled.section`
     justify-content: center;
     align-items: center;
     padding: 0 50px;
+    text-align: center;
+    flex-direction: column;
+    gap: 20px;
 
     > p {
       color: ${theme.colors.darkGreen};

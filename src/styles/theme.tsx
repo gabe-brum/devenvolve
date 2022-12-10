@@ -19,8 +19,8 @@ export default {
     small: "14px",
     medium: "18px",
     large: "24px",
-    larger: "30px",
-    xxLarge: "48px"
+    larger: "36px",
+    xxLarge: "65px"
   },
 
   borderRadius: {

@@ -1,7 +1,8 @@
 export interface DemandProps {
-  imageBrand: string,
+  id?: number, 
+  imageBrand?: string,
   nameBrand: string,
-  stars: number,
+  stars?: number,
   nameDemand: string,
   price: number,
   stack: string,
