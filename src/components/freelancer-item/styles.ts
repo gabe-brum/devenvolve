@@ -21,6 +21,7 @@ export const FreelancerContainer = styled.div`
   .image {
     background-image: url(${(props) => props.image});
     background-position: center;
+    background-color: ${theme.colors.darkGreen};
     background-size: cover;
     border-radius: 20px;
     overflow: hidden;

@@ -9,6 +9,7 @@ export function ButtonLogout() {
 
   function logout() {
     dispatch(UserActions.logout())
+    localStorage.setItem('token', '')
     router.push('/')
   }
 

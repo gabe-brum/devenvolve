@@ -15,7 +15,7 @@ export default function NavigationFooter({ active }: NavigationFooterProps) {
   const userData = useSelector((state: RootState) => state?.user)
 
   function renderItems() {
-    if (true) { // userData.tipo === 'freela'
+    if (userData?.tipo === 'freela') { 
       return (
         <Footer>
           <Link className={`itemMenu ${active ? 'clicked' : ''}`} href={"/initial-page"} passHref >
@@ -36,7 +36,7 @@ export default function NavigationFooter({ active }: NavigationFooterProps) {
   
     return (
       <Footer>
-       <Link className={`itemMenu ${active ? 'clicked' : ''}`} href={"/initial-page"} passHref >
+       <Link className={`itemMenu ${active ? 'clicked' : ''}`} href={"/initial-page-brand"} passHref >
           <Image src={home} alt="Página inicial" />
         </Link>
         <Link className={`itemMenu ${active ? 'clicked' : ''}`} href={"/registers-demands"} passHref >

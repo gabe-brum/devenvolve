@@ -9,26 +9,6 @@ import { ButtonLogout } from '@components/button-logout'
 import { useSelector } from "react-redux"
 import { RootState } from "src/store/modules/rootReducer"
 import api from "src/services/api"
-import { DemandProps } from "@components/demand-item/types"
-
-const hasApplicationDemandBrand = [
-  {
-    id: 1,
-    title: 'Título da demanda',
-    stack: 'Backend',
-    price: 2000,
-    numberOfApplication: 20,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-  },
-  {
-    id: 2,
-    title: 'Título da demanda 2',
-    stack: 'Frontend',
-    price: 1700,
-    numberOfApplication: 12,
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-  },
-]
 
 export default function ApplicationDemandPage() {
   const userData = useSelector((state: RootState) => state?.user)
@@ -67,8 +47,8 @@ export default function ApplicationDemandPage() {
     if (!hasRegisterDemand.length) return renderNotFoundApplicationDemand()
 
     return hasRegisterDemand.map((demand) => {
-      const { title, stack, price, numberOfApplication, id, description } = demand
-      return <ApplicationDemand key={id} id={id} title={title} stack={stack} price={price} numberOfApplication={numberOfApplication} type={'brand'} description={description}/>
+      const { nome, stack, preco, numberOfApplication, id, descricao } = demand
+      return <ApplicationDemand key={id} id={id} title={nome} stack={stack} price={preco} numberOfApplication={numberOfApplication} type={'brand'} description={descricao}/>
     })
   }
 

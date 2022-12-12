@@ -123,7 +123,7 @@ export const ContainerPlans = styled(Container)`
 `
 
 export const ContainerAbout = styled(Container)`
-  height: 145vh;
+  height: 150vh;
 
   @media (min-width: ${theme.breakpoints.mobile}) {
     height: 110vh;
@@ -217,7 +217,7 @@ export const ContainerLogin = styled(Container)`
     padding: 0 100px;
     justify-content: center;
     align-items: center;
-    height: 145vh;
+    height: 150vh;
   }
 
   .login-wrapper__type {
@@ -241,7 +241,7 @@ export const ContainerLogin = styled(Container)`
         min-height: 400px;
 
         @media (min-width: ${theme.breakpoints.tablet}) {
-          min-height: 820px;
+          min-height: 840px;
         }
       }
 
@@ -262,7 +262,7 @@ export const ContainerLogin = styled(Container)`
       justify-content: center;
       align-items: center;
       padding: 10px 20px;
-      min-height: 820px;
+      min-height: 840px;
       width: 100%;
 
       > form {
@@ -387,11 +387,11 @@ export const ContainerLogin = styled(Container)`
             font-size: 12px;
             text-transform: uppercase;
             
-            .error {
+            &.error {
               color: ${theme.colors.error};
             }
 
-            .success {
+            &.success {
               color: ${theme.colors.green};
             }
           }
@@ -407,7 +407,7 @@ export const ContainerLogin = styled(Container)`
           height: 40px;
           font-family: "Antonio", sans-serif;
           font-weight: ${theme.fontWeights.bold};
-          transform: all .5s;
+          transition: all .5s;
           width: 100%;
 
           &:hover {

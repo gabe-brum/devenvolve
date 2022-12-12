@@ -1,4 +1,5 @@
 export interface FreelancerItemProps {
+  id: number
   image: string
   name: string
   stars: number
@@ -7,6 +8,6 @@ export interface FreelancerItemProps {
 }
 
 export type SkillsProps = {
-  name: string
-  id: number
+  descricao: string
+  idSkill: number
 }

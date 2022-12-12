@@ -127,7 +127,7 @@ export const DemandContainer = styled.div`
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      gap: 10px 0;
+      gap: 10px 20px;
       width: 100%;
 
       .price {

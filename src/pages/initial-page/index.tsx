@@ -13,7 +13,6 @@ import api from 'src/services/api'
 export default function InitialPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [hasResultsOfSearch, setHasResultsOfSearch] = useState([])
-  const [hasResults, setHasResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
   const [demands, setDemands] = useState([])
   const userData = useSelector((state: RootState) => state?.user)
@@ -49,7 +48,6 @@ export default function InitialPage() {
       const response = await api.get(`api/Freelancer/PesquisaDemanda?nomeDemanda=${searchTerms}`)
 
       if (response.data) {
-        setHasResults(true)
         setHasResultsOfSearch(response.data)
       }
 
@@ -59,27 +57,31 @@ export default function InitialPage() {
   }
 
   function renderSearchDemands() {
-    if (hasResults) {
-      return hasResultsOfSearch.map((demandResult) => {
-        <DemandItem
-        key={demandResult.id}
-        imageBrand={demandResult.imageBrand}
-        nameBrand={demandResult.nameBrand}
-        stars={demandResult.stars}
-        nameDemand={demandResult.title}
-        price={demandResult.price}
-        stack={demandResult.stack}
-        description={demandResult.description}
-        />
-      })
+    if (!hasResultsOfSearch.length) {
+      return (
+        <div className='not-found-demands'>
+          <p>Não encontramos demandas para o que foi informado.</p>
+          <p>Tente novamente com um novo termo!</p>
+        </div>
+      )
     }
 
-    return (
-      <div className='not-found-demands'>
-        <p>Não encontramos demandas para o que foi informado.</p>
-        <p>Tente novamente com um novo termo!</p>
-      </div>
-    )
+    return hasResultsOfSearch.map((demandResult) => {
+      return (
+        <DemandItem
+        id={demandResult.idDemanda}
+        idBrand={demandResult.idEmpresa}
+        key={demandResult.id}
+        imageBrand={demandResult?.foto}
+        nameBrand={demandResult?.nomeEmpresa}
+        stars={demandResult?.reputacao}
+        nameDemand={demandResult.nome}
+        price={demandResult.preco}
+        stack={demandResult.stack}
+        description={demandResult.descricao}
+        />
+      )
+    })
   }
 
   function getInputText(e: react.ChangeEvent<HTMLInputElement>) {
@@ -100,14 +102,16 @@ export default function InitialPage() {
     return demands.map((demand) => {
       return (
         <DemandItem
+        id={demand.idDemanda}
+        idBrand={demand.idEmpresa}
         key={demand.id}
-        imageBrand={demand.imageBrand}
-        nameBrand={demand.nameBrand}
-        stars={demand.stars}
-        nameDemand={demand.title}
-        price={demand.price}
+        imageBrand={demand?.foto}
+        nameBrand={demand?.nomeEmpresa}
+        stars={demand?.reputacao}
+        nameDemand={demand.nome}
+        price={demand.preco}
         stack={demand.stack}
-        description={demand.description}
+        description={demand.descricao}
         />
       )
     })
@@ -115,7 +119,7 @@ export default function InitialPage() {
 
   async function getDemand() {
     try {
-      const demands = await api.get('/api/Empresa/GetDemandas')
+      const demands = await api.get('/api/Demanda/GetDemandas')
       setDemands(demands.data)
 
     } catch (error) {

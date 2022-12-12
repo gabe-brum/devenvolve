@@ -23,6 +23,7 @@ export const ApplicationDemandStyle = styled.section`
     }
 
     &--text {
+      color: ${theme.colors.darkGreen};
       font-size: 32px;
       text-align: center;
     }

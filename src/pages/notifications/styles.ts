@@ -11,6 +11,7 @@ export const Notifications = styled.div`
 
   .not-found-notifications {
     font-size: 36px;
+    text-align: center;
 
     @media (min-width: ${theme.breakpoints.tablet}) {
       font-size: 55px;

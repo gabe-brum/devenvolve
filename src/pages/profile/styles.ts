@@ -68,6 +68,11 @@ export const InfosProfile = styled.article`
       &:hover {
         background-color: ${theme.colors.darkGreenHover};
       }
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.2;
+      }
     }
 
     &.secondary {
@@ -103,7 +108,7 @@ export const ImageProfile = styled.div`
     padding: 12px 145px;
 
     @media (min-width: ${theme.breakpoints.tablet}){
-      padding: 12px 130px;
+      padding: 12px 136px;
     }
   }
 
@@ -291,5 +296,38 @@ export const ContentModal = styled.div`
         }
       }
     }
+  }
+
+  .password {
+    display: flex;
+    flex-direction: column;
+    gap: 10px 0;
+    color: ${theme.colors.darkGreen};
+    width: 100%;
+
+    > input {
+      height: 40px;
+      border-radius: 20px;
+      border: 1px solid ${theme.colors.darkGreen};
+      outline: none;
+      color: ${theme.colors.darkGreen};
+      padding: 0 15px;
+    }
+
+    > button {
+      height: 40px;
+      outline: none;
+      background-color: ${theme.colors.darkGreen};
+      color: ${theme.colors.lightGreen};
+      border: none;
+      border-radius: 20px;
+      transition: all .5s;
+      cursor: pointer;
+
+      &:hover {
+        background-color: ${theme.colors.darkGreenHover};
+      }
+    }
+
   }
 `

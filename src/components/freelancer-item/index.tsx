@@ -1,11 +1,13 @@
 import { Modal } from '@components/modal';
 import { Stars } from '@components/stars';
-import react, { useState } from 'react'
+import react, { useEffect, useState } from 'react'
+import api from 'src/services/api';
 import { FreelancerContainer, ModalContent } from './styles';
 import { FreelancerItemProps, SkillsProps } from './types';
 
-export default function FreelancerItem({ image, name, stars, description, skills }: FreelancerItemProps) {
+export default function FreelancerItem({ id, image, name, stars, description }: FreelancerItemProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [skillsFreela, setSkillsFreela] = useState([])
 
   let isMobile: boolean;
   if (typeof window !== 'undefined') {
@@ -30,7 +32,7 @@ export default function FreelancerItem({ image, name, stars, description, skills
             <p className='wrapper-content--description'>{renderDescription(description)}</p>
             <div className='wrapper-content--skills'>
               <p>Suas skills:</p>
-              <div className='skills'>{renderSkills(skills)}</div>
+              <div className='skills'>{renderSkills(skillsFreela)}</div>
               </div>
           </div>
         </ModalContent>
@@ -39,14 +41,28 @@ export default function FreelancerItem({ image, name, stars, description, skills
   }
 
   function renderSkills(skills: Array<SkillsProps>) {
-    if (!skills) return 'Nenhuma skill atribuída'
+    if (!skills.length) return 'Nenhuma skill atribuída'
 
     return skills?.map(skill => {
       return (
-        <span key={skill.id}>{skill.name}</span>
+        <span key={skill.idSkill}>{skill.descricao}</span>
       )
     })
   }
+
+  useEffect(() => {
+    async function getSkills() {
+      try {
+        const response = await api.get('/api/Freelancer/SkillsFreelancers')
+        setSkillsFreela(response.data)
+      } catch (error) {
+        console.log(`Não foi possível pegar as skills do usuário devido ao erro [${error}]`)
+      }
+    }
+
+    getSkills()
+  }, [])
+ 
 
   function renderDescription(description: string) {
     if (!description) return 'Sem descrição...'

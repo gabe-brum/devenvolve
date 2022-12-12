@@ -14,13 +14,16 @@ import Link from 'next/link'
 import { IMaskInput } from "react-imask";
 import { useForm } from 'react-hook-form';
 import api from '../../services/api'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import * as UserActions from '../../store/modules/user/actions'
 import { useRouter } from 'next/router'
+import { RootState } from 'src/store/modules/rootReducer'
 
 export default function HomePage() {
   const [formMessage, setFormMessage] = useState('')
   const [hasError, setHasError] = useState(false)
+  const [formMessageRegister, setFormMessageRegister] = useState('')
+  const [hasErrorRegister, setHasErrorRegister] = useState(false)
   const [cpfCnpj, setCpfCnpj] = useState('')
   const [isFreelancerChecked, setIsFreelancerChecked] = useState(false)
   const [isBrandChecked, setIsBrandChecked] = useState(false)
@@ -46,6 +49,8 @@ export default function HomePage() {
   const [district, setDistrict] = useState('')
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
+  const [plan, setPlan] = useState()
+  // const userData = useSelector((state: RootState) => state?.user)
 
   let date = new Date();
   let year = date.getFullYear();
@@ -55,62 +60,112 @@ export default function HomePage() {
     isMobile = window.innerWidth <= 768
   }
 
-  useEffect(() => {
-  }, [])
-
-  async function onLoginSubmit() {
-    try {
-      const response = await api.post('/login', {
-        email, senha: password, tipo: type
-      })
-
-      if (response) {
-        dispatch(
-          UserActions.login(response.data)
-        )
-        if (response) router.replace('/initial-page') // freelancer 
-
-        if (response) router.replace('/initial-page-brand') // empresa
-        
-        window.location.reload()
+  function validateLogin() {
+    if (!email || !password || !type) {
+      setHasError(true)
+    
+      if (!email) {
+        setFormMessage("Você precisa informar seu e-mail")
       }
-    } catch (error) {
-      console.log(error)
+  
+      if (!password) {
+        setFormMessage("Informe seu senha")
+      }
+  
+      if (!type) {
+        setFormMessage("Você precisa marcar o seu tipo de usuário cadastrado")
+      }
+
+      return false
+    }
+
+    return true
+  }
+
+  async function onLoginSubmit(e?: any) {
+    if (e) e.preventDefault()
+    const isValidLogin = validateLogin()
+    if (isValidLogin) {
+      try {
+        const response = await api.post('/login', {
+          email, senha: password, tipo: type
+        })
+
+        if (response) {
+          dispatch(
+            UserActions.login(response.data)
+          )
+
+          localStorage.setItem('token', response.data.token)
+
+          if (response.data.tipo === 'freela') router.push('/initial-page') // freelancer 
+
+          if (response.data.tipo === 'empresa') router.push('/initial-page-brand') // empresa
+        }
+      } catch (error) {
+        setHasError(true)
+        setFormMessage("Erro ao fazer o login. Algum dado informado pode estar errado, revise e tente novamente!")
+        console.log(error)
+      }
     }
   }
 
-  async function onRegisterSubmit(e: FormDataEvent) {
-    e.preventDefault()
-
-    try {
-      const response = await api.post('/Usuario/AddUsuario', {
-        name, email, password, type, cpfCnpjInput, phone, cep, number, street, district, city, state
-      })
-
-      if (response.status === 201) { 
-        onLoginSubmit()
-        dispatch(UserActions.login(response.data))
-      }
-
-      setFormMessage('Usuário cadastrado com sucesso!')
-
-    } catch (error) {
-      setHasError(true)
-      setFormMessage('Erro ao tentar cadastrar o usuário. Tente novamente mais tarde!')
+  function validateRegister() {
+    const validRegister = name || email || password || type || cpfCnpjInput || phone || cep || number || street || district || city || state 
+    if (!validRegister) {
+      setHasErrorRegister(true)
+      setFormMessageRegister("Todos os dados do cadastro são obrigatórios. Por favor, preencha-os")
+      return false
     }
 
-    setName('')
-    setEmail('')
-    setPassword('')
-    setType('')
-    setCpfCnpjInput('')
-    setPhone('')
-    setCep('')
-    setNumber('')
-    setStreet('')
-    setDistrict('')
-    setCity('')
-    setState('')
+    return true
+  }
+
+  async function onRegisterSubmit() {
+    const isValidRegister = validateRegister()
+
+    if (isValidRegister) {
+      try {
+        const response = await api.post('/api/Usuario/AddUsuario', {
+          nome: name,
+          email,
+          senha: password,
+          descricao: '',
+          celular: phone,
+          tipo: type,
+          cidade: city,
+          estado: state,
+          cep,
+          logradouro: street,
+          bairro: district,
+          numero: number,
+          idPlano: 0
+        })
+
+        if (response.status === 200) { 
+          setFormMessageRegister('Usuário cadastrado com sucesso!')
+          onLoginSubmit()
+        }
+
+      } catch (error) {
+        setHasErrorRegister(true)
+        setFormMessageRegister('Erro ao tentar cadastrar o usuário. Tente novamente mais tarde!')
+        console.log(error)
+      }
+
+      setName('')
+      setEmail('')
+      setPassword('')
+      setType('')
+      setCpfCnpjInput('')
+      setPhone('')
+      setCep('')
+      setNumber('')
+      setStreet('')
+      setDistrict('')
+      setCity('')
+      setState('')
+    }
   }
 
   const handleOnChangeFreelancer = () => {
@@ -143,6 +198,12 @@ export default function HomePage() {
 
   function handleChangeCep(event: react.ChangeEvent<HTMLInputElement>) {
     let cep = event.target.value.replace(/\D/g, '')
+
+    if (cep.length > 8 || cep.length < 8) {
+      setHasErrorRegister(true)
+      setFormMessageRegister("O CEP informado está errado!")
+    }
+
     let url = `https://viacep.com.br/ws/${cep}/json`
 
     const options: RequestInit = {
@@ -154,10 +215,10 @@ export default function HomePage() {
     }
 
     fetch(url, options).then(res => res.json()).then(data => {
-      setValue('street', data.logradouro);
-      setValue('district', data.bairro);
-      setValue('city', data.localidade);
-      setValue('state', data.uf);
+      setStreet(data.logradouro)
+      setCity(data.localidade)
+      setState(data.uf)
+      setDistrict(data.bairro)
       setFocus('number')
     })
   }
@@ -185,7 +246,7 @@ export default function HomePage() {
       <ContainerAbout id="about">
         <h2>Sobre a DevEnvolve</h2>
         <p className='about__content'>
-          Projeto desenvolvido pelos alunos Gabriel Brum da Luz e Bruno Bordin, do curso de Análise e Desenvolvimento de Sistemas na Feevale. A DevEnvolve visa trazer um diferencial para os desenvolvedores freelancers que estão buscando colocar seus conhecimentos em prática através de tarefas que se identifiquem, mas que além disso tem amigos e conhecidos que também são desenvolvedores, indiferente da stack de atuação. Com esses amigos e conhecidos, por meio da indicação, cada dev poderá ganhar até 30% no valor da demanda indicada!
+          Projeto desenvolvido pelos alunos Gabriel Brum da Luz e Bruno Bordin, do curso de Análise e Desenvolvimento de Sistemas na Feevale. A DevEnvolve visa trazer um diferencial para os desenvolvedores freelancers que estão buscando colocar seus conhecimentos em prática através de tarefas que se identifiquem, mas que além disso tem amigos e conhecidos que também são desenvolvedores, indiferente da stack de atuação. Com esses amigos e conhecidos, por meio da indicação, cada dev poderá ganhar até 30% no valor da demanda indicada! Desta forma, com devs engajados e competentes, a DevEnvolve também se torna uma ótima plataforma para que empresas possam criar suas demandas e visualizarem possíveis executores de suas necessidades.
         </p>
         <p className='about__call'>Conheça mais sobre quem desenvolveu essa plataforma!</p>
         <div className='about-devs'>
@@ -225,7 +286,7 @@ export default function HomePage() {
         <div className='login-wrapper__type'>
           <p>Login</p>
           <div className='login-wrapper__type--card'>
-            <form onSubmit={handleSubmit(onLoginSubmit)}>
+            <form onSubmit={(e: any) => onLoginSubmit(e)}>
               <label htmlFor='email'>E-mail:</label>
               <input type="email" id='email' onChange={(event: any) => setEmail(event.target.value)}/>
               <label htmlFor='password'>Senha:</label>
@@ -276,14 +337,11 @@ export default function HomePage() {
             <label htmlFor='cpfCnpj'>Informe seu {cpfCnpj}:</label>
             <IMaskInput
               mask={maskCpfCnpj}
-              onComplete={(e: react.ChangeEvent<HTMLInputElement>) => setCpfCnpjInput(e.target.value)}
+              onComplete={(e: react.ChangeEvent<HTMLInputElement>) => setCpfCnpjInput(e?.target?.value)}
             />
 
             <label htmlFor='cpfCnpj'>Informe seu telefone:</label>
-            <IMaskInput
-              mask='(00) 00000-0000'
-              onComplete={(e: react.ChangeEvent<HTMLInputElement>) => setPhone(e.target.value)}
-            />
+            <input type="text" id='cpjCnpj' name='cpjCnpj' onChange={(e) => setPhone(e.target.value)}/>
     
             <div className='cep-wrapper'>
               <div className='cep-wrapper__item'>
@@ -292,28 +350,28 @@ export default function HomePage() {
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="number">Informe o número:</label>
-                <input type="number" id='number' {...register('number')} onChange={(e) => setNumber(e.target.value)}/>
+                <input type="number" id='number' value={number} onChange={(e) => setNumber(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="street">Informe o logradouro:</label>
-                <input type="text" id='street' {...register('street')} onChange={(e) => setStreet(e.target.value)}/>
+                <input type="text" id='street' value={street} onChange={(e) => setStreet(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="city">Informe a cidade:</label>
-                <input type="text" id='city' {...register('city')} onChange={(e) => setCity(e.target.value)}/>
+                <input type="text" id='city' value={city} onChange={(e) => setCity(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="district">Informe o bairro:</label>
-                <input type="text" id='district' {...register('district')} onChange={(e) => setDistrict(e.target.value)}/>
+                <input type="text" id='district' value={district} onChange={(e) => setDistrict(e.target.value)}/>
               </div>
               <div className='cep-wrapper__item'>
                 <label htmlFor="state">Informe o estado:</label>
-                <input type="text" id='state' {...register('state')} onChange={(e) => setState(e.target.value)}/>
+                <input type="text" id='state' value={state} onChange={(e) => setState(e.target.value)}/>
               </div>
             </div>
            
             <div className='form-message'>
-              <p className={`form-message__text ${hasError ? 'error' : 'success'}`}>{formMessage}</p>
+              <p className={`form-message__text ${hasErrorRegister ? 'error' : 'success'}`}>{formMessageRegister}</p>
             </div>
             <button type='submit' className='button-submit'>Cadastrar</button>
             </form>

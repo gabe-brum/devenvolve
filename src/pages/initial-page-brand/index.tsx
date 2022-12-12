@@ -2,12 +2,13 @@ import react, { useEffect, useState } from 'react'
 import { FreelancerList, FooterInfos, HeaderPage } from './styles'
 import searchIcon from '../../imgs/icons/search.png'
 import Image from 'next/image'
-import DemandItem from '@components/demand-item'
 import NavigationFooter from '@components/navigation-footer'
 import { Footer, Main } from '../../styles/pages/default'
 import FreelancerItem from '@components/freelancer-item'
 import { ButtonLogout } from '@components/button-logout'
 import api from 'src/services/api'
+import { useSelector } from 'react-redux'
+import { RootState } from 'src/store/modules/rootReducer'
 
 const freelancers = [
   {
@@ -35,10 +36,10 @@ const freelancers = [
 
 export default function InitialPageBrand() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [hasResults, setHasResults] = useState(false)
   const [hasResultsOfSearch, setHasResultsOfSearch] = useState([])
   const [isSearching, setIsSearching] = useState(false)
   const [freelancers, setFreelancers] = useState([])
+  const userData = useSelector((state: RootState) => state?.user)
 
   function definePhrase() {
     let date = new Date()
@@ -57,11 +58,7 @@ export default function InitialPageBrand() {
   }
 
   function getNameBrand() {
-    let brand: string;
-
-    brand = 'Empresa Lorem Ipsum' // default
-
-    return brand;
+    return userData?.nome;
   }
 
   async function searchTerms(searchTerms: string) {
@@ -71,35 +68,37 @@ export default function InitialPageBrand() {
       const response = await api.get(`/api/Freelancer/PesquisaFreelancer?nomeFreelancer=${searchTerms}`)
 
       if (response.data) {
-        setHasResults(true)
         setHasResultsOfSearch(response.data)
       }
 
     } catch (error) {
-      console.log('Não foi possível buscar as demandas pelo termo informado!')
+      console.log('Não foi possível buscar o freelancer pelo termo informado!')
     }
   }
 
   function renderSearchFreelancers() {
-    if (hasResults) {
-      return hasResultsOfSearch.map((freelancerResult) => {
-        <FreelancerItem
-        key={freelancerResult.id}
-        image={freelancerResult.image}
-        name={freelancerResult.name}
-        stars={freelancerResult.stars}
-        description={freelancerResult.description}
-        skills={freelancerResult.skills}
-        />
-      })
+    if (!hasResultsOfSearch.length) {
+      return (
+        <div className='not-found-freelancers'>
+          <p>Não encontramos freelancers para o que foi informado.</p>
+          <p>Tente novamente com um novo termo!</p>
+        </div>
+      )
     }
 
-    return (
-      <div className='not-found-freelancers'>
-        <p>Não encontramos freelancers para o que foi informado.</p>
-        <p>Tente novamente com um novo termo!</p>
-      </div>
-    )
+    return hasResultsOfSearch.map((freelancerResult) => {
+      return (
+        <FreelancerItem
+        id={freelancerResult.idFreelancer}
+        key={freelancerResult.id}
+        image={freelancerResult.foto}
+        name={freelancerResult.nome}
+        stars={freelancerResult.reputacao}
+        description={freelancerResult.descricao}
+        skills={freelancerResult.skills}
+        />
+      )
+    })
   }
 
   function getInputText(e: react.ChangeEvent<HTMLInputElement>) {
@@ -119,6 +118,7 @@ export default function InitialPageBrand() {
     return freelancers.map((freelancer) => {
       return (
         <FreelancerItem
+        id={freelancer.idFreelancer}
         key={freelancer.id}
         image={freelancer.foto}
         name={freelancer.nome}

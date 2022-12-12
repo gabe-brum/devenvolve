@@ -1,10 +1,11 @@
 import { Modal } from '@components/modal';
 import { Stars } from '@components/stars';
 import react, { useState } from 'react'
+import api from 'src/services/api';
 import { DemandContainer, ModalContent } from './styles';
 import { DemandProps } from './types';
 
-export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, price, stack, description }: DemandProps) {
+export default function DemandItem({ id, idBrand, imageBrand, nameBrand, stars, nameDemand, price, stack, description }: DemandProps) {
   let isMobile: boolean;
   if (typeof window !== 'undefined') {
     isMobile = window.innerWidth <= 768
@@ -14,6 +15,28 @@ export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, p
 
   function closeModal() {
     setIsModalOpen(false)
+  }
+
+  function renderStack(stack: number) {
+    if (stack === 0) return 'Backend'
+    if(stack === 1) return 'Frontend'
+    if(stack === 2) return 'Full-Stack' 
+  }
+
+  async function applicationDemand() {
+    try {
+      const response = await api.post(`/api/Freelancer/CandidatarseDemanda?idDemanda=${id}&idEmpresa=${idBrand}`)
+      if (response.status === 200) window.location.reload()
+
+    } catch (error) {
+      console.log(`Não foi possível efetuar a candidatura devido ao erro [${error}]`)
+    }
+  }
+
+  function indicateDemand() {
+    let user = prompt("Informe o email do seu indicado:")
+
+    alert(`O seu indicado ${user} recebeu a notificação`)
   }
 
   function renderModal() {
@@ -27,7 +50,7 @@ export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, p
         <ModalContent>
           <div className='demand-infos'>
             <p>{nameDemand}</p>
-            <p>{stack}</p>
+            <p>{renderStack(stack)}</p>
             <p>R$<span>{price}</span></p>
           </div>
           <div className='description'>
@@ -35,8 +58,8 @@ export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, p
             <p>{description}</p>
           </div>
           <div className='buttons'>
-            <button className='button register'>Candidatar à demanda</button>
-            <button className='button recommendation'>Indicar demanda</button>
+            <button className='button register' onClick={() => applicationDemand()}>Candidatar-se à demanda</button>
+            <button className='button recommendation' onClick={() => indicateDemand()}>Indicar demanda</button>
           </div>
         </ModalContent>
       </Modal>
@@ -56,7 +79,7 @@ export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, p
           <div className='demand-content'>
             <div className='demand-content__title-and-stack'>
               <p className='title'>{nameDemand}</p>
-              <p className='stack'>{stack}</p>
+              <p className='stack'>{renderStack(stack)}</p>
             </div>
             <div className='demand-content__price-and-button'>
               <p className='price'>R$<span>{price}</span></p>
@@ -79,7 +102,7 @@ export default function DemandItem({ imageBrand, nameBrand, stars, nameDemand, p
         <div className='demand-content'>
           <div className='demand-content__title-and-stack'>
               <p className='title'>{nameDemand}</p>
-              <p className='stack'>{stack}</p>
+              <p className='stack'>{renderStack(stack)}</p>
             </div>
           <div className='demand-content__price-and-button'>
             <p className='price'>R$<span>{price}</span></p>

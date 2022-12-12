@@ -46,6 +46,12 @@ export default function ApplicationDemand({ id, title, stack, price, numberOfApp
     return renderContentModal(type)
   }
 
+  function renderStack(stack: number) {
+    if (stack === 0) return 'Backend'
+    if(stack === 1) return 'Frontend'
+    if(stack === 2) return 'Full-Stack' 
+  }
+
   function renderContentModal(type: string) {
     if (type === 'freelancer') {
       return (
@@ -56,7 +62,7 @@ export default function ApplicationDemand({ id, title, stack, price, numberOfApp
           <ModalContent>
             <div className='demand-infos'>
               <p>{title}</p>
-              <p>{stack}</p>
+              <p>{renderStack(stack)}</p>
               <p>R$<span>{price}</span></p>
             </div>
             <div className='description'>
@@ -115,7 +121,7 @@ export default function ApplicationDemand({ id, title, stack, price, numberOfApp
           <ContainerInfo>
             <h3>{title}</h3>
             <div className="infos-wrapper">
-              <p>{stack}</p>
+              <p>{renderStack(stack)}</p>
               <p>R$ <span>{price}</span></p>
             </div>
             <p>Candidatura aplicada em: {date}</p>
@@ -133,7 +139,7 @@ export default function ApplicationDemand({ id, title, stack, price, numberOfApp
         <ContainerInfo>
           <h3>{title}</h3>
           <div className="infos-wrapper">
-            <p>{stack}</p>
+            <p>{renderStack(stack)}</p>
             <p>R$ <span>{price}</span></p>
           </div>
           <p>Candidaturas aplicadas: {numberOfApplication}</p>

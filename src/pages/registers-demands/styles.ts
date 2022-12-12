@@ -52,8 +52,9 @@ export const ApplicationDemandStyle = styled.section`
 
   .new-demand {
     position: fixed;
-    bottom: 80px;
-    right: 20px;
+    bottom: 150px;
+    right: 15px;
+    box-shadow: 2px 2px 5px ${theme.colors.blackGray};
     border: none;
     border-radius: 20px;
     cursor: pointer;

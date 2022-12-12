@@ -17,19 +17,26 @@ export default function ProfilePage() {
   const [mySkills, setMySKills] = useState([])
   const [openModal, setOpenModal] = useState({isOpen: false, type: ''})
   const router = useRouter()
+  const [hasChanges, setHasChanges] = useState(false)
+  const [newPasswordProfile, setNewPasswordProfile] = useState('')
 
-  useEffect(() => {
-    if (!true) {} // user.data !== 'freela'
+  function renderBalanceFreelancer() {
+    if (userData?.tipo !== 'freela') return null
 
-    renderBalance()
-  })
+    return (
+      <div className='wrapper-content'>
+        <p className='wrapper-content__title'>Seu saldo é de: <span>R${returnBalance(userData?.saldo)}</span></p>
+        <button onClick={() => notImplements()} className='button secondary'>Sacar saldo</button>
+      </div>
+    )
+  }
 
   function closeModal() {
     setOpenModal(prevState => { return { ...prevState, isOpen: false} })
   }
 
   function goToHome() {
-    if (userData.tipoe === 'freela') return '/initial-page'
+    if (userData?.tipo === 'freela') return '/initial-page'
 
     return '/initial-page-brand'
   }
@@ -71,6 +78,24 @@ export default function ProfilePage() {
       )
     }
 
+    if (openModal.type === 'new-password') {
+      return (
+        <Modal
+          isOpen={openModal.isOpen}
+          onRequestClose={() => closeModal()}
+        >
+          <ContentModal>
+            <p>Informe sua senha abaixo:</p>
+            <div className='password'>
+              <label htmlFor="new-password">Nova senha:</label>
+              <input type="password" id='new-password' name='new-password' onChange={(e) => setNewPasswordProfile(e.target.value)}/>
+              <button onClick={() => newPassword()}>Alterar</button>
+            </div>
+          </ContentModal>
+        </Modal>
+      )
+    }
+
     return (
       <Modal
         isOpen={openModal.isOpen}
@@ -88,29 +113,51 @@ export default function ProfilePage() {
   }
 
   function deleteProfile() {
-    userData.tipo === 'freela' ? disableProfileFreelancers() : disableProfileBrand()
+    userData?.tipo === 'freela' ? disableProfileFreelancers() : disableProfileBrand()
   }
 
   function saveChanges() {
+    sendMySkills()
+    alert('Alterações salvas com sucesso!')
 
+    if (userData?.tipo === 'freela') router.push('/initial-page')
+    if (userData?.tipo === 'empresa') router.push('/initial-page-brand')
   }
 
-  function renderBalance() {
-    return (
-      <div className='wrapper-content'>
-        <p className='wrapper-content__title'>Seu saldo é de: <span>R${'user.balance'}</span></p>
-        <button onClick={() => notImplements()} className='button secondary'>Sacar saldo</button>
-      </div>
-    )
+  function returnBalance(balance: number) {
+    return '0,00'
   }
 
   function notImplements() {
     alert('Desculpe, funcionalidade não implementada!')
   }
 
+  async function newPassword() {
+    const isFreelancer = userData?.tipo === 'freela'
+
+    try {
+      if (!isFreelancer) {
+        const response = await api.patch(`/api/Empresa/SenhaEmpresa?senha=${newPasswordProfile}`)
+        if (response.status === 200) { 
+          alert("Senha alterada com sucesso")
+          window.location.reload()
+        }
+      }
+
+      const response = await api.patch(`/api/Freelancer/SenhaFreela?senha=${newPasswordProfile}`)
+      if (response.status === 200) { 
+        alert("Senha alterada com sucesso")
+        window.location.reload()
+      }
+  
+    } catch (error) {
+      console.log(`Não foi possível alterar a senha do usuário devido ao erro [${error}]`)
+    }
+  }
+
   async function disableProfileFreelancers() {
     try {
-      const response = await api.delete('api/Freelancer/DeletarFreelancer')
+      const response = await api.delete('/api/Freelancer/DeletarFreelancer')
 
       if (response.status === 200) router.push('/')
 
@@ -122,7 +169,7 @@ export default function ProfilePage() {
 
   async function disableProfileBrand() {
     try {
-      const response = await api.delete('api/Empresa/DeletarEmpresa')
+      const response = await api.delete('/api/Empresa/DeletarEmpresa')
 
       if (response.status === 200) router.push('/')
 
@@ -133,16 +180,32 @@ export default function ProfilePage() {
   }
 
   function renderSkills() {
-    if (!skills) return <p>Nenhuma skill cadastrada</p>
+    if (!skills.length) return <p>Nenhuma skill cadastrada</p>
   
     return skills.map((skill) => {
-      return <CheckboxSkill name={skill.nome} id={skill.id} key={skill.id} onChecked={() => setMySKills(skill.id)}/>
+      return <CheckboxSkill name={skill.descricao} id={skill.idSkill} key={skill.idSkill} onChecked={() => setMySKills(skill.idSkill)}/>
     })
+  }
+
+  function renderSkillsFreelancer() {
+    if (userData?.tipo !== 'freela') return null
+
+    return (
+      <Skills>
+      <h2>Marque e atribua as skills que você se identifica</h2>
+      <div className='wrapper-skills'>
+        {renderSkills()}
+      </div>
+      
+    </Skills>
+    )
   }
 
   async function sendMySkills() {
     try {
-      const response = await api.post('/api/', mySkills)
+      const response = await api.post('/api/Skills/PostSkillsFreelancer', mySkills)
+      return response.data
+
     } catch (error) {
       console.log(`Ocorreu o erro [${error}] ao tentar atribuir as skills selecionadas.`)
     }
@@ -151,7 +214,7 @@ export default function ProfilePage() {
   useEffect(() => {
     async function getSkills() {
       try {
-        const response = await api.get('/api/Sklls/getSkills')
+        const response = await api.get('/api/Skills/getSkills')
         setSkills(response.data)
   
       } catch (error) {
@@ -161,6 +224,14 @@ export default function ProfilePage() {
 
     getSkills()
   }, [])
+
+  function returnPlan(plan: number) {
+    if (plan === 0) return 'Start'
+    if (plan === 1 ) return 'Silver'
+    if (plan === 2) return 'Gold'
+
+    return 'Start'
+  }
 
   return (
     <Main>
@@ -178,47 +249,41 @@ export default function ProfilePage() {
             </div>
           </ImageProfile>
           <DataProfile>
-            <input type='text' id='name' defaultValue={'user.nome'} className='input-profile' />
-            <input type='text' id='name' defaultValue={'user.email'} className='input-profile' disabled={true}/>
+            <input type='text' id='name' defaultValue={userData?.nome} className='input-profile' onChange={() => setHasChanges(true)}/>
+            <input type='text' id='name' defaultValue={userData?.email} className='input-profile' disabled={true}/>
             <div className='wrapper-content'>
-              <input type='password' id='name' defaultValue={'user.senha'} className='wrapper-content__input input-profile' disabled={true}/>
-              <button onClick={() => notImplements()} className='button secondary'>Solicitar alteração de senha</button>
+              <input type='password' id='name' defaultValue={userData?.senha} className='wrapper-content__input input-profile' disabled={true}/>
+              <button onClick={() => setOpenModal({isOpen: true, type: 'new-password'})} className='button secondary'>Solicitar alteração de senha</button>
             </div>
             <div className='wrapper-content'>
               <p className='wrapper-content__title'>Sua reputação: </p>
               <div className='wrapper-content__stars'><Stars stars={0} /></div>
             </div>
-            <input type="text" id='phone' defaultValue={'user.telefone'} className='input-profile'/>
+            <input type="text" id='phone' defaultValue={userData?.celular} className='input-profile' onChange={() => setHasChanges(true)}/>
             <div className='wrapper-address'>
-              <input type="text" id='cep' name='id' defaultValue={'user.cep'} className='wrapper-address__input input-profile'/>
-              <input type="text" id='number' name='number' defaultValue={'user.numero'} className='wrapper-address__input input-profile'/>
-              <input type="text" id='address' name='address' defaultValue={'user.logradouro'} className='wrapper-address__input input-profile'/>
-              <input type="text" id='city' name='city' defaultValue={'user.cidade'} className='wrapper-address__input input-profile'/>
-              <input type="text" id='district' name='district' defaultValue={'user.bairro'} className='wrapper-address__input input-profile'/>
-              <input type="text" id='state' name='state' defaultValue={'user.estado'} className='wrapper-address__input input-profile'/>
+              <input type="text" id='cep' name='id' defaultValue={userData?.cep} className='wrapper-address__input input-profile' onChange={() => setHasChanges(true)}/>
+              <input type="text" id='number' name='number' defaultValue={userData?.numero} className='wrapper-address__input input-profile' onChange={() => setHasChanges(true)}/>
+              <input type="text" id='address' name='address' defaultValue={userData?.logradouro} className='wrapper-address__input input-profile' onChange={() => setHasChanges(true)}/>
+              <input type="text" id='city' name='city' defaultValue={userData?.cidade} className='wrapper-address__input input-profile' onChange={() => setHasChanges(true)}/>
+              <input type="text" id='district' name='district' defaultValue={userData?.bairro} className='wrapper-address__input input-profile' onChange={() => setHasChanges(true)}/>
+              <input type="text" id='state' name='state' defaultValue={userData?.estado} className='wrapper-address__input input-profile' onChange={() => setHasChanges(true)}/>
             </div>
             <div className='wrapper-content'>
-              <button className='button primary' onClick={() => setOpenModal({isOpen: true, type: 'cancel'})} >Cancelar alterações</button>
+              <button className='button primary' disabled={!hasChanges} onClick={() => setOpenModal({isOpen: true, type: 'cancel'})} >Cancelar alterações</button>
               <button className='button tertiary' onClick={() => setOpenModal({isOpen: true, type: 'save'})}>Salvar</button>
             </div>
             <div className='wrapper-content'>
-              <p className='wrapper-content__title'>Seu plano é o: <span>{'user.plano'}</span></p>
+              <p className='wrapper-content__title'>Seu plano é o: <span>{returnPlan(userData?.idPlano)}</span></p>
               <button onClick={() => notImplements()} className='button secondary'>Alterar plano</button>
             </div>
-            {renderBalance()}
+            {renderBalanceFreelancer()}
           </DataProfile>
         </InfosProfile>
         <DescriptionUser>
           <label htmlFor="description-user">Descreva-se:</label>
-          <textarea name="description-user" id="description-user" className='description-user' placeholder='Use esse espaço para definir quem é você...'></textarea>
+          <textarea name="description-user" id="description-user" className='description-user' placeholder='Use esse espaço para definir quem é você...' defaultValue={userData?.descricao}></textarea>
         </DescriptionUser>
-        <Skills>
-          <h2>Marque e atribua as skills que você se identifica</h2>
-          <div className='wrapper-skills'>
-            {renderSkills()}
-          </div>
-          
-        </Skills>
+        {renderSkillsFreelancer()}
         <button className='button-disable-profile' onClick={() => setOpenModal({isOpen: true, type: 'delete'})} >Excluir perfil</button>
       </ContainerProfile>
       <Footer>
